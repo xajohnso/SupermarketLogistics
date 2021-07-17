@@ -1,12 +1,18 @@
 package person;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import product.Product;
 
 public class Shopper {
 
 
 	private double wallet;
 	private HashMap<String, Integer> Cart = new HashMap<String, Integer>();
+	private ArrayList<String> productsInCart = new ArrayList<String>();
+	private double priceTotal = 0;
+	
 	
 	public Shopper() {}
 	
@@ -29,22 +35,6 @@ public class Shopper {
 		return wallet;
 	}
 	
-	/*
-	1) List products in cart 2) Choose product(s) to remove 3) Call to finish method
-	
-	public void removeProduct() {
-	Scanner sn = new Scanner(System.in);
-	Shelf shelf = new Shelf();
-	System.out.println("Which product would you like?");
-	shelf.showShelf();
-	int productChoice = sn.nextInt();
-	
-	System.out.println("Quantity?");
-	int quantityChoice = sn.nextInt();
-	
-	}
-	*/
-	
 	//Adds product and amount of product to cart of shopper
 	public void addToCart(String product, Integer amount) {
 		Cart.put(product, amount);
@@ -52,6 +42,23 @@ public class Shopper {
 	
 	public void printCart() {
 		Cart.forEach((k,v) -> System.out.println(k + " Quantity: " + v));
+	}
+	
+	public void cartToSet() {
+		productsInCart.addAll(Cart.keySet());
+	}
+	
+	public void getItems() {
+		Product product = new Product();
+		int quantity = 0;
+		double cost = 0;
+		double total = (double) quantity * cost;
+		for (int x = 0; x < productsInCart.size(); x++) {
+			cost = product.getProductsPrice(productsInCart.get(x));
+			quantity = Cart.get(productsInCart.get(x));
+			priceTotal = priceTotal + total;
+		}
+		
 	}
 	
 }
