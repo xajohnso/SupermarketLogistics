@@ -1,0 +1,25 @@
+package person;
+
+import java.util.ArrayList;
+
+import product.Pallet;
+import product.Truck;
+
+public class Stocker {
+
+	private ArrayList<Pallet> getPallets = new ArrayList<Pallet>();
+	
+	public void removeFromTruck(Truck truck) {
+		getPallets.addAll(truck.delivery());
+	}
+	
+	public void stockShelf() {
+		for (int x = 0; x < getPallets.size(); x++) {
+			te(getPallets.get(x));
+		}
+	}
+	
+	public void te(Pallet pallet) {
+		
+	}
+}
