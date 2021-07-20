@@ -2,8 +2,9 @@ package person;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
-import product.Product;
+import product.Shelf;
 
 public class Shopper {
 
@@ -11,7 +12,6 @@ public class Shopper {
 	private double wallet;
 	private HashMap<String, Integer> Cart = new HashMap<String, Integer>();
 	private ArrayList<String> productsInCart = new ArrayList<String>();
-	private double priceTotal = 0;
 	
 	
 	public Shopper() {}
@@ -48,17 +48,38 @@ public class Shopper {
 		productsInCart.addAll(Cart.keySet());
 	}
 	
-	public void getItems() {
-		Product product = new Product();
-		int quantity = 0;
-		double cost = 0;
-		double total = (double) quantity * cost;
+	public double getItems(Shelf shelf) {
+		
+		double priceTotal = 0.0;
+		double quantity = 0;
+		double cost = 0.0;
+		
 		for (int x = 0; x < productsInCart.size(); x++) {
-			cost = product.getProductsPrice(productsInCart.get(x));
-			quantity = Cart.get(productsInCart.get(x));
-			priceTotal = priceTotal + total;
+			cost = shelf.getProductsPrice(productsInCart.get(x));
+			quantity = (double) Cart.get(productsInCart.get(x));
+			priceTotal = priceTotal + (cost * quantity);
 		}
 		
+		return priceTotal;
+	}
+	
+	public void removeItems(Scanner scanner) {
+		System.out.println("Which item?");
+		printCart();
+		int choice = scanner.nextInt();
+		switch(choice) {
+		default:
+			String pS = productsInCart.get(choice - 1);
+			System.out.println("Quantity?");
+			int qC = scanner.nextInt();
+			boolean check = Cart.get(pS) == qC;
+			if (check == true) {
+				Cart.remove(pS);
+			} else {
+				Cart.replace(pS, Cart.get(pS) - qC);
+			}
+		break;
+		}
 	}
 	
 }
