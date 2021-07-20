@@ -2,6 +2,7 @@ package main;
 
 import java.util.Scanner;
 
+import person.Cashier;
 import person.Shopper;
 import product.Product;
 import product.Shelf;
@@ -11,12 +12,18 @@ public class Main {
 	static Shopper shopper = new Shopper();
 	static Shelf shelf = new Shelf();
 	static Product product = new Product();
+	static Cashier cashier = new Cashier();
 	
 	public static void main(String[] args) {
+		
+		int num = (int) (Math.random() * 4);
+		System.out.println(num);
 		
 		Scanner scanner = new Scanner(System.in);
 		start(shopper, shelf);
 		shop(shopper, shelf, scanner);
+		cashier.checkOut(shopper, shelf, scanner);
+		
 		scanner.close();
 	}
 	
@@ -55,7 +62,7 @@ public class Main {
 	
 	public static void priceTotal(Shopper shopper, Shelf shelf) {
 		shopper.cartToSet();
-		shopper.getItems();
+		shopper.getItems(shelf);
 	}
 
 }
