@@ -1,42 +1,61 @@
 package product;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Truck {
-
-	private ArrayList<Pallet> pallets = new ArrayList<Pallet>();
-	private ArrayList<String> productList = new ArrayList<String>();
-	private Pallet p00;
-	private Pallet p01;
-	private Pallet p02;
 	
-	public void nn() {
-		pallets.add(p00);
-		pallets.add(p01);
-		pallets.add(p02);
+	protected ArrayList<Integer> productIDs = new ArrayList<Integer>();
+	protected HashMap<Integer, Integer> pallet = new HashMap<Integer, Integer>();
+	
+	
+	public void start() {
+		getProductIDs();
+		createPallet();
 	}
 	
-	public void setProductList() {
-		Product product = new Product();
-		productList.addAll(product.productsPrice.keySet());
-	}
-	
-	public void fillPallet(Pallet pallet) {
-		for (int x = 0; x < 3; x++) {
-			int product = (int)(Math.random() * (productList.size() - 1));
-			int caseQuantity = (int)(Math.random() * 3);
-			pallet.pallet.put(productList.get(product), caseQuantity);
+	public void getProductIDs() {
+		try {
+			Connection cn = DriverManager.getConnection("location", "user", "password");
+			
+			String statement = "select idproducts from store.products";
+			Statement st = cn.createStatement();
+			ResultSet rs = st.executeQuery(statement);
+			
+			while (rs.next()) {
+				productIDs.add(rs.getInt("idproducts"));
+			}
+			
+			cn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
-	public void fillAll() {
-		for (int q = 0; q < pallets.size(); q++) {
-			fillPallet(pallets.get(q));
+	public void createPallet() {
+		for (int x = 0; x < productIDs.size(); x++) {
+			int stockAmount = (int)(Math.random() * 3);
+			pallet.put(productIDs.get(x), stockAmount);
 		}
 	}
 	
-	public ArrayList<Pallet> delivery() {
+	public void showPallet() {
+		pallet.forEach((p,s) -> System.out.println("Product: " + p + " Stock: " + s));
+	}
+	
+	public void emptyPallet(Pallet storePallet) {
+		storePallet.palletTransfer(pallet);
+		pallet.clear();
+	}
+	
+	//             ***NEEDS WORK***
+	public void newOrder() {
 		
-		return pallets;
 	}
 }
