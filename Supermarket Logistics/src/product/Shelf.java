@@ -1,62 +1,58 @@
 package product;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 
-public class Shelf extends Product {
+public class Shelf {
 
 	private HashMap<String, Integer> shelfStock = new HashMap<String, Integer>();
-	private ArrayList<String> productNames = new ArrayList<String>();
-	private int productSpace = 10;
+	private productDB pDB = new productDB();
 	
-	//Adds products to shelf when employee stocks **NEEDS WORK**
-	public void addShelf(String product) {
-		boolean check = shelfStock.containsKey(product);
-		int x = 0;
-		System.out.println(check);
-		if (check == true) {
-				x = shelfStock.get(product) + productsPackages.get(product);
-				
-				// If-else to see if a full case of a product can be put on the shelf **BACKSTOCK LINK NEEDED**
-				if (x > productSpace) {
-					shelfStock.replace(product, productSpace);
-				} else {
-					shelfStock.replace(product, x);
-				}
-				
-		} else {
-			shelfStock.put(product, productsPackages.get(product));
-		}
-
-		
-	}
-	
-	// Adds products to the shelf *Start*
-	public void newShelf() {
-		setProducts();
-		setPrices();
-		productsPackages.forEach((k,v) -> addShelf(k));
-		shiftCollection();
-	}
 	
 	// Prints shelf
 	public void showShelf() {
-		shelfStock.forEach((k, v) -> System.out.println("Product: " + k + " In stock: " + v));
+		shelfStock.forEach((k, v) -> System.out.println("Product: " + k + " In stock: " + v + " Price: $" + pDB.getProductPrice(k)));
+	}
+	
+	public void updateShelf() {
+		try {
+			Connection cn = DriverManager.getConnection("location", "user", "password");
+			
+			String statement = "SELECT * FROM store.floor_products";
+			Statement st = cn.createStatement();
+			ResultSet rs = st.executeQuery(statement);
+			
+			while (rs.next()) {
+				shelfStock.put(rs.getString("product_name"), rs.getInt("floor_stock"));
+			}
+			
+			cn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	// Updates shelf after shopper buys
-	public void updateShelf(String product, int amount) {
+	public void shelfShopUpdate(String product, int amount) {
 		shelfStock.replace(product, shelfStock.get(product) - amount);
-	}
 	
-	
-	public void shiftCollection() {
-		productNames.addAll(shelfStock.keySet());
-	}
-	
-	public String getProduct(int position) {
-		String product = productNames.get(position - 1);
-		return product;
+		try {
+		Connection cn = DriverManager.getConnection("location", "user", "password");
+		String statement = "update store.products " + "set floor_stock = (?) where product_name = (?)";
+		PreparedStatement ps = cn.prepareStatement(statement);
+		ps.setInt(1, shelfStock.get(product) - amount);
+		ps.setString(2, product);
+
+		cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
